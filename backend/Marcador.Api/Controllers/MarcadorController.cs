@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Marcador.Api.Models;
 using Marcador.Api.Services;
+using Marcador.Api.Dtos; 
 
 namespace Marcador.Api.Controllers
 {
@@ -9,36 +10,93 @@ namespace Marcador.Api.Controllers
     public class MarcadorController : ControllerBase
     {
         private readonly MarcadorService _service;
+        public MarcadorController(MarcadorService service) => _service = service;
 
-        public MarcadorController(MarcadorService service)
-        {
-            _service = service;
-        }
-
-        // GET api/marcador
+        // Lecturas
         [HttpGet]
-        public ActionResult<MarcadorGlobal> GetMarcador()
-        {
-            return Ok(_service.GetMarcador());
-        }
+        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
+        public ActionResult<MarcadorGlobal> GetMarcador() => Ok(_service.GetMarcador());
 
-        // POST api/marcador/puntos/sumar
+        [HttpGet("tiempo")]
+        [ProducesResponseType(typeof(EstadoTiempoDto), StatusCodes.Status200OK)]
+        public ActionResult<EstadoTiempoDto> GetTiempo() => Ok(_service.GetEstadoTiempo());
+
+        // Puntos
         [HttpPost("puntos/sumar")]
-        public IActionResult SumarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
+        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public IActionResult SumarPuntos([FromBody] PuntosDto dto)
         {
-            _service.SumarPuntos(equipo, puntos);
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            _service.SumarPuntos(dto.Equipo, dto.Puntos);
             return Ok(_service.GetMarcador());
         }
 
-        // POST api/marcador/puntos/restar
         [HttpPost("puntos/restar")]
-        public IActionResult RestarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
+        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
+        public IActionResult RestarPuntos([FromBody] PuntosDto dto)
         {
-            _service.RestarPuntos(equipo, puntos);
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            _service.RestarPuntos(dto.Equipo, dto.Puntos);
             return Ok(_service.GetMarcador());
         }
 
-        // POST api/marcador/cuarto/siguiente
+        // Faltas
+        [HttpPost("falta")]
+        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
+        public IActionResult RegistrarFalta([FromBody] FaltaDto dto)
+        {
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            _service.RegistrarFalta(dto.Equipo);
+            return Ok(_service.GetMarcador());
+        }
+
+        // Tiempo
+        [HttpPost("tiempo/configurar-duracion")]
+        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        public IActionResult ConfigurarDuracion([FromBody] ConfigTiempoDto dto)
+        {
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            try
+            {
+                _service.ConfigurarDuracion(dto.DuracionSegundosPorCuarto);
+                return Ok(_service.GetMarcador());
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(title: "Conflicto de estado", detail: ex.Message, statusCode: StatusCodes.Status409Conflict);
+            }
+        }
+
+        [HttpPost("tiempo/iniciar")]
+        public IActionResult IniciarTiempo()
+        {
+            _service.IniciarTiempo();
+            return Ok(_service.GetMarcador());
+        }
+
+        [HttpPost("tiempo/pausar")]
+        public IActionResult PausarTiempo()
+        {
+            _service.PausarTiempo();
+            return Ok(_service.GetMarcador());
+        }
+
+        [HttpPost("tiempo/reanudar")]
+        public IActionResult ReanudarTiempo()
+        {
+            _service.ReanudarTiempo();
+            return Ok(_service.GetMarcador());
+        }
+
+        [HttpPost("tiempo/reiniciar")]
+        public IActionResult ReiniciarTiempo()
+        {
+            _service.ReiniciarTiempo();
+            return Ok(_service.GetMarcador());
+        }
+
         [HttpPost("cuarto/siguiente")]
         public IActionResult AvanzarCuarto()
         {
@@ -46,12 +104,12 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        // POST api/marcador/falta
-        [HttpPost("falta")]
-        public IActionResult RegistrarFalta([FromQuery] string equipo)
+        [HttpPost("reiniciar-marcador")]
+        public IActionResult ReiniciarMarcador()
         {
-            _service.RegistrarFalta(equipo);
+            _service.ReiniciarMarcador();
             return Ok(_service.GetMarcador());
         }
     }
+
 }

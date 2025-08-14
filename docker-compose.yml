@@ -1,0 +1,40 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: marcador-sql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}         # define esto en .env
+      - MSSQL_PID=Express
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - backend-net
+    # No expongas el 1433 públicamente salvo que lo necesites:
+    # ports:
+    #   - "1433:1433"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./Marcador.Api
+      dockerfile: Dockerfile
+    container_name: marcador-api
+    environment:
+      # ConnectionStrings__DefaultConnection -> appsettings mapping
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MarcadorDb;User=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+    depends_on:
+      - sqlserver
+    networks:
+      - backend-net
+    ports:
+      - "8080:8080"   # expuesto al exterior
+    restart: unless-stopped
+
+networks:
+  backend-net:
+
+volumes:
+  mssql-data:
