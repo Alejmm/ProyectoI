@@ -1,3 +1,11 @@
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.csproj.AssemblyReference.cache
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.AssemblyInfoInputs.cache
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.AssemblyInfo.cs
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.csproj.CoreCompileInputs.cache
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.sourcelink.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\appsettings.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\Marcador.Api.exe
@@ -10,14 +18,6 @@ C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.csproj.AssemblyReference.cache
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.AssemblyInfoInputs.cache
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.AssemblyInfo.cs
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.csproj.CoreCompileInputs.cache
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\Marcador.Api.sourcelink.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\Jenny\Documents\marcador\ProyectoI\backend\Marcador.Api\obj\Debug\net8.0\staticwebassets\msbuild.Marcador.Api.Microsoft.AspNetCore.StaticWebAssets.props
