@@ -1,0 +1,16 @@
+# Crea/actualiza .gitignore (mínimo para .NET)
+@"
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.rsuser
+*.log
+"@ | Set-Content -Encoding utf8 .gitignore
+
+# Saca del índice lo que debe ignorarse (no borra de disco)
+git rm -r --cached "backend/Marcador.Api/bin" "backend/Marcador.Api/obj"
+git add .gitignore
+git commit -m "chore: ignorar bin/ y obj en el repo"
+git push
