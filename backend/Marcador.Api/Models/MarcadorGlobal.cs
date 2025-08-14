@@ -6,5 +6,7 @@ namespace Marcador.Api.Models
         public Equipo EquipoVisitante { get; set; }
         public int CuartoActual { get; set; } = 1;
         public int TiempoRestante { get; set; } = 600; // segundos, ejemplo 10 minutos
+        public bool EnProrroga { get; set; } = false;
+        public int NumeroProrroga { get; set; } = 0;
     }
 }

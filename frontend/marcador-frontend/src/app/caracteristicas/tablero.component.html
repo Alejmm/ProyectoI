@@ -1,0 +1,89 @@
+<mat-card style="max-width:960px;margin:24px auto;padding:16px;">
+  <h2>Tablero</h2>
+
+  <div *ngIf="cargando()">Cargando…</div>
+  <div *ngIf="error()" style="color:#b00020;">{{ error() }}</div>
+
+  <ng-container *ngIf="datos() as d">
+    <!-- cabecera -->
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;">
+      <div style="font-size:1.2rem;"><b>{{ d.equipoLocal.nombre }}</b></div>
+      <div style="font-size:2.4rem;font-weight:700; text-align:center;">
+        {{ mmss(d.tiempoRestante) }}
+      </div>
+      <div style="font-size:1.2rem; text-align:right;"><b>{{ d.equipoVisitante.nombre }}</b></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:6px;">
+      <div style="font-size:3rem; font-weight:800;">{{ d.equipoLocal.puntos }}</div>
+      <div style="text-align:center;">
+  <ng-container *ngIf="!d.enProrroga; else prorrogaTpl">
+    Cuarto: <b>{{ d.cuartoActual }}</b> / 4
+  </ng-container>
+  <ng-template #prorrogaTpl>
+    <b>Prórroga {{ d.numeroProrroga }}</b>
+  </ng-template>
+</div>
+      <div style="font-size:3rem; font-weight:800; text-align:right;">{{ d.equipoVisitante.puntos }}</div>
+    </div>
+
+    <!-- ⏱️ Controles del reloj -->
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0 4px;">
+  <button mat-stroked-button (click)="iniciar()"  [disabled]="corriendo() || !datos()">Iniciar</button>
+  <button mat-stroked-button (click)="pausar()"   [disabled]="!corriendo()">Pausar</button>
+  <button mat-stroked-button (click)="reiniciar()">Reiniciar 10:00</button>
+
+  <!--deshabilitamos según límites -->
+  <button mat-button (click)="ajustar(10)"
+          [disabled]="(datos()?.tiempoRestante ?? 0) >= 20*60">+10s</button>
+  <button mat-button (click)="ajustar(-10)"
+          [disabled]="(datos()?.tiempoRestante ?? 0) < 10">-10s</button>
+</div>
+
+
+    <!-- Controles de puntos -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px;">
+      <button mat-raised-button (click)="sumar('local',1)" [disabled]="esperando()">Local +1</button>
+      <button mat-raised-button (click)="sumar('local',2)" [disabled]="esperando()">Local +2</button>
+      <button mat-raised-button (click)="sumar('local',3)" [disabled]="esperando()">Local +3</button>
+      <button mat-raised-button color="warn" (click)="restar('local',1)" [disabled]="esperando()">Local -1</button>
+
+      <span style="width:20px;"></span>
+
+      <button mat-raised-button (click)="sumar('visitante',1)" [disabled]="esperando()">Visita +1</button>
+      <button mat-raised-button (click)="sumar('visitante',2)" [disabled]="esperando()">Visita +2</button>
+      <button mat-raised-button (click)="sumar('visitante',3)" [disabled]="esperando()">Visita +3</button>
+      <button mat-raised-button color="warn" (click)="restar('visitante',1)" [disabled]="esperando()">Visita -1</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:4px;">
+  <div>Faltas: <b>{{ d.equipoLocal.faltas }}</b></div>
+  <div></div>
+  <div style="text-align:right;">Faltas: <b>{{ d.equipoVisitante.faltas }}</b></div>
+</div>
+
+
+    <!-- Faltas / cuarto -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;">
+<button mat-stroked-button
+        (click)="falta('local')"
+        [disabled]="esperando()"
+        [matBadge]="d.equipoLocal.faltas"
+        matBadgeColor="warn"
+        matBadgePosition="after">
+  Falta Local
+</button>
+
+<button mat-stroked-button
+        (click)="falta('visitante')"
+        [disabled]="esperando()"
+        [matBadge]="d.equipoVisitante.faltas"
+        matBadgeColor="warn"
+        matBadgePosition="after">
+  Falta Visita
+</button>
+      <button mat-flat-button color="primary" (click)="siguienteCuarto()" [disabled]="esperando()">Siguiente cuarto</button>
+      <button mat-stroked-button (click)="cargar()" [disabled]="esperando()">Refrescar</button>
+    </div>
+  </ng-container>
+</mat-card>

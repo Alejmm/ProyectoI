@@ -11,4 +11,4 @@ namespace Marcador.Api.Models
         public int Faltas { get; set; }
         public List<Jugador> Jugadores { get; set; } = new();
     }
-}
+}   
