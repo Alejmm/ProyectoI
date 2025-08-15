@@ -109,10 +109,16 @@ namespace Marcador.Api.Migrations
                     b.Property<int>("CuartoActual")
                         .HasColumnType("int");
 
+                    b.Property<bool>("EnProrroga")
+                        .HasColumnType("bit");
+
                     b.Property<int>("EquipoLocalId")
                         .HasColumnType("int");
 
                     b.Property<int>("EquipoVisitanteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumeroProrroga")
                         .HasColumnType("int");
 
                     b.Property<int>("TiempoRestante")

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Marcador.Api.Models;
 using Marcador.Api.Services;
-using Marcador.Api.Dtos; 
+using Marcador.Api.Dtos;
 
 namespace Marcador.Api.Controllers
 {
@@ -12,63 +12,43 @@ namespace Marcador.Api.Controllers
         private readonly MarcadorService _service;
         public MarcadorController(MarcadorService service) => _service = service;
 
-        // Lecturas
+        // ---- Lecturas ----
         [HttpGet]
-        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
         public ActionResult<MarcadorGlobal> GetMarcador() => Ok(_service.GetMarcador());
 
         [HttpGet("tiempo")]
-        [ProducesResponseType(typeof(EstadoTiempoDto), StatusCodes.Status200OK)]
         public ActionResult<EstadoTiempoDto> GetTiempo() => Ok(_service.GetEstadoTiempo());
 
-        // Puntos
+        // ---- Puntos (vía query para hacerlo simple) ----
+        // POST /api/marcador/puntos/sumar?equipo=Local&puntos=2
         [HttpPost("puntos/sumar")]
-        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public IActionResult SumarPuntos([FromBody] PuntosDto dto)
+        public IActionResult SumarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
         {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
-            _service.SumarPuntos(dto.Equipo, dto.Puntos);
+            if (!TryNormalizarEquipo(equipo, out var eq)) return BadRequest("Parametro 'equipo' debe ser 'local' o 'visitante'.");
+            _service.SumarPuntos(eq, puntos);
             return Ok(_service.GetMarcador());
         }
 
+        // POST /api/marcador/puntos/restar?equipo=Visitante&puntos=1
         [HttpPost("puntos/restar")]
-        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
-        public IActionResult RestarPuntos([FromBody] PuntosDto dto)
+        public IActionResult RestarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
         {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
-            _service.RestarPuntos(dto.Equipo, dto.Puntos);
+            if (!TryNormalizarEquipo(equipo, out var eq)) return BadRequest("Parametro 'equipo' debe ser 'local' o 'visitante'.");
+            _service.RestarPuntos(eq, puntos);
             return Ok(_service.GetMarcador());
         }
 
-        // Faltas
+        // ---- Faltas ----
+        // POST /api/marcador/falta?equipo=Local
         [HttpPost("falta")]
-        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
-        public IActionResult RegistrarFalta([FromBody] FaltaDto dto)
+        public IActionResult RegistrarFalta([FromQuery] string equipo)
         {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
-            _service.RegistrarFalta(dto.Equipo);
+            if (!TryNormalizarEquipo(equipo, out var eq)) return BadRequest("Parametro 'equipo' debe ser 'local' o 'visitante'.");
+            _service.RegistrarFalta(eq);
             return Ok(_service.GetMarcador());
         }
 
-        // Tiempo
-        [HttpPost("tiempo/configurar-duracion")]
-        [ProducesResponseType(typeof(MarcadorGlobal), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-        public IActionResult ConfigurarDuracion([FromBody] ConfigTiempoDto dto)
-        {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
-            try
-            {
-                _service.ConfigurarDuracion(dto.DuracionSegundosPorCuarto);
-                return Ok(_service.GetMarcador());
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Problem(title: "Conflicto de estado", detail: ex.Message, statusCode: StatusCodes.Status409Conflict);
-            }
-        }
-
+        // ---- Tiempo ----
         [HttpPost("tiempo/iniciar")]
         public IActionResult IniciarTiempo()
         {
@@ -90,13 +70,23 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
+        // POST /api/marcador/tiempo/reiniciar?seg=600
         [HttpPost("tiempo/reiniciar")]
-        public IActionResult ReiniciarTiempo()
+        public ActionResult<MarcadorGlobal> ReiniciarTiempo([FromQuery] int? seg)
         {
-            _service.ReiniciarTiempo();
-            return Ok(_service.GetMarcador());
+            var resultado = _service.ReiniciarTiempo(seg ?? 600);
+            return Ok(resultado);
         }
 
+        // POST /api/marcador/tiempo/establecer?seg=545
+        [HttpPost("tiempo/establecer")]
+        public ActionResult<MarcadorGlobal> EstablecerTiempo([FromQuery] int seg)
+        {
+            var resultado = _service.EstablecerTiempo(seg);
+            return Ok(resultado);
+        }
+
+        // ---- Cuartos ----
         [HttpPost("cuarto/siguiente")]
         public IActionResult AvanzarCuarto()
         {
@@ -104,12 +94,15 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        [HttpPost("reiniciar-marcador")]
-        public IActionResult ReiniciarMarcador()
+        // helper
+        private static bool TryNormalizarEquipo(string? equipo, out string normalizado)
         {
-            _service.ReiniciarMarcador();
-            return Ok(_service.GetMarcador());
+            normalizado = "";
+            if (string.IsNullOrWhiteSpace(equipo)) return false;
+            var e = equipo.Trim().ToLowerInvariant();
+            if (e == "local") { normalizado = "Local"; return true; }
+            if (e == "visitante") { normalizado = "Visitante"; return true; }
+            return false;
         }
     }
-
 }

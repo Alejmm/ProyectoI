@@ -30,4 +30,20 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();  // Esto activa los controladores
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<MarcadorDbContext>();
+    db.Database.Migrate();
+}
+
+// Liveness simple
+app.MapGet("/healthz", () => Results.Ok("OK"));
+
+// (Opcional) Readiness con chequeo de BD
+app.MapGet("/ready", async (MarcadorDbContext db) =>
+{
+    var canConnect = await db.Database.CanConnectAsync();
+    return canConnect ? Results.Ok(new { db = "up" }) : Results.StatusCode(503);
+});
+
 app.Run();

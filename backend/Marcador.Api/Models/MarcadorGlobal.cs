@@ -11,5 +11,7 @@ namespace Marcador.Api.Models
 
     public int CuartoActual { get; set; } = 1;
     public int TiempoRestante { get; set; } = 600; 
+    public bool EnProrroga { get; set; } = false;
+    public int NumeroProrroga { get; set; } = 0;	
     }
 }
