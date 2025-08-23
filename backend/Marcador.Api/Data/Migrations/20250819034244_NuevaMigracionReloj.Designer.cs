@@ -3,16 +3,19 @@ using Marcador.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Marcador.Api.Migrations
+namespace Marcador.Api.Data.Migrations
 {
     [DbContext(typeof(MarcadorDbContext))]
-    partial class MarcadorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250819034244_NuevaMigracionReloj")]
+    partial class NuevaMigracionReloj
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,8 +69,6 @@ namespace Marcador.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipoId");
 
                     b.ToTable("Faltas");
                 });
@@ -136,17 +137,6 @@ namespace Marcador.Api.Migrations
                     b.HasIndex("EquipoVisitanteId");
 
                     b.ToTable("Marcadores");
-                });
-
-            modelBuilder.Entity("Marcador.Api.Models.Falta", b =>
-                {
-                    b.HasOne("Marcador.Api.Models.Equipo", "Equipo")
-                        .WithMany()
-                        .HasForeignKey("EquipoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Equipo");
                 });
 
             modelBuilder.Entity("Marcador.Api.Models.Jugador", b =>

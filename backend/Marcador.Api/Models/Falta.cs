@@ -5,7 +5,8 @@ namespace Marcador.Api.Models
         public int Id { get; set; }
         public int JugadorId { get; set; }
         public int EquipoId { get; set; }
-        public string Tipo { get; set; } // personal, técnica, etc.
+        public Equipo Equipo { get; set; } = null!;
+        public string Tipo { get; set; } = string.Empty;
         public int Minuto { get; set; }
     }
 }

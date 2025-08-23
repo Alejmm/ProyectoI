@@ -19,8 +19,7 @@ namespace Marcador.Api.Controllers
         [HttpGet("tiempo")]
         public ActionResult<EstadoTiempoDto> GetTiempo() => Ok(_service.GetEstadoTiempo());
 
-        // ---- Puntos (vía query para hacerlo simple) ----
-        // POST /api/marcador/puntos/sumar?equipo=Local&puntos=2
+        // ---- Puntos ----
         [HttpPost("puntos/sumar")]
         public IActionResult SumarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
         {
@@ -29,7 +28,6 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        // POST /api/marcador/puntos/restar?equipo=Visitante&puntos=1
         [HttpPost("puntos/restar")]
         public IActionResult RestarPuntos([FromQuery] string equipo, [FromQuery] int puntos)
         {
@@ -39,7 +37,6 @@ namespace Marcador.Api.Controllers
         }
 
         // ---- Faltas ----
-        // POST /api/marcador/falta?equipo=Local
         [HttpPost("falta")]
         public IActionResult RegistrarFalta([FromQuery] string equipo)
         {
@@ -48,7 +45,15 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        // ---- Tiempo ----
+        // ---- Cuartos ----
+        [HttpPost("cuarto/siguiente")]
+        public IActionResult AvanzarCuarto()
+        {
+            _service.AvanzarCuarto();
+            return Ok(_service.GetMarcador());
+        }
+
+        // ---- Tiempo (rutas existentes) ----
         [HttpPost("tiempo/iniciar")]
         public IActionResult IniciarTiempo()
         {
@@ -70,7 +75,6 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        // POST /api/marcador/tiempo/reiniciar?seg=600
         [HttpPost("tiempo/reiniciar")]
         public ActionResult<MarcadorGlobal> ReiniciarTiempo([FromQuery] int? seg)
         {
@@ -78,7 +82,6 @@ namespace Marcador.Api.Controllers
             return Ok(resultado);
         }
 
-        // POST /api/marcador/tiempo/establecer?seg=545
         [HttpPost("tiempo/establecer")]
         public ActionResult<MarcadorGlobal> EstablecerTiempo([FromQuery] int seg)
         {
@@ -86,15 +89,34 @@ namespace Marcador.Api.Controllers
             return Ok(resultado);
         }
 
-        // ---- Cuartos ----
-        [HttpPost("cuarto/siguiente")]
-        public IActionResult AvanzarCuarto()
+        // ---- Tiempo  ----
+        [HttpPost("reloj/iniciar")]
+        public ActionResult<MarcadorGlobal> IniciarReloj()
         {
-            _service.AvanzarCuarto();
+            _service.IniciarReloj();
             return Ok(_service.GetMarcador());
         }
 
-        // helper
+        [HttpPost("reloj/pausar")]
+        public ActionResult<MarcadorGlobal> PausarReloj()
+        {
+            _service.PausarReloj();
+            return Ok(_service.GetMarcador());
+        }
+
+        // ---- Equipos  ----
+        public record RenombrarEquiposDto(string? Local, string? Visitante);
+
+        [HttpPost("equipos/renombrar")]
+        public ActionResult<MarcadorGlobal> RenombrarEquipos([FromBody] RenombrarEquiposDto dto)
+        {
+            var res = _service.RenombrarEquipos(dto.Local, dto.Visitante);
+            return Ok(res);
+        }
+
+        [HttpPost("nuevo")]
+        public ActionResult<MarcadorGlobal> Nuevo() => Ok(_service.NuevoPartido());
+       
         private static bool TryNormalizarEquipo(string? equipo, out string normalizado)
         {
             normalizado = "";
