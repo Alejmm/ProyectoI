@@ -4,16 +4,19 @@ using Marcador.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Marcador.Api.Migrations
+namespace Marcador.Api.Data.Migrations
 {
     [DbContext(typeof(MarcadorDbContext))]
-    partial class MarcadorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250824063642_AddPartidoHistoricoNuevo")]
+    partial class AddPartidoHistoricoNuevo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,10 +200,6 @@ namespace Marcador.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipoLocalId");
-
-                    b.HasIndex("EquipoVisitanteId");
 
                     b.ToTable("PartidosHistoricos");
                 });

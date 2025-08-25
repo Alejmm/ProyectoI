@@ -19,6 +19,13 @@ builder.Services.AddControllers(); // Para usar controladores
 
 var app = builder.Build();
 
+// Inicialización al arrancar la API (si quieres empezar siempre en 0)
+using (var scope = app.Services.CreateScope())
+{
+    var svc = scope.ServiceProvider.GetRequiredService<MarcadorService>();
+    svc.InicializarEnCero();   // ← deja todo en 0 al levantar la API
+}
+
 // Pipeline
 if (app.Environment.IsDevelopment())
 {

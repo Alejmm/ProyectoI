@@ -1,3 +1,4 @@
+// Controllers/MarcadorController.cs
 using Microsoft.AspNetCore.Mvc;
 using Marcador.Api.Models;
 using Marcador.Api.Services;
@@ -49,11 +50,11 @@ namespace Marcador.Api.Controllers
         [HttpPost("cuarto/siguiente")]
         public IActionResult AvanzarCuarto()
         {
-            _service.AvanzarCuarto();
-            return Ok(_service.GetMarcador());
+            var siguiente = _service.SiguienteCuarto();
+            return Ok(siguiente);
         }
 
-        // ---- Tiempo (rutas existentes) ----
+        // ---- Tiempo (rutas estilo tiempo/*) ----
         [HttpPost("tiempo/iniciar")]
         public IActionResult IniciarTiempo()
         {
@@ -86,10 +87,11 @@ namespace Marcador.Api.Controllers
         public ActionResult<MarcadorGlobal> EstablecerTiempo([FromQuery] int seg)
         {
             var resultado = _service.EstablecerTiempo(seg);
+
             return Ok(resultado);
         }
 
-        // ---- Tiempo  ----
+        // ---- Tiempo (rutas estilo reloj/*) ----
         [HttpPost("reloj/iniciar")]
         public ActionResult<MarcadorGlobal> IniciarReloj()
         {
@@ -104,7 +106,7 @@ namespace Marcador.Api.Controllers
             return Ok(_service.GetMarcador());
         }
 
-        // ---- Equipos  ----
+        // ---- Equipos ----
         public record RenombrarEquiposDto(string? Local, string? Visitante);
 
         [HttpPost("equipos/renombrar")]
@@ -114,9 +116,40 @@ namespace Marcador.Api.Controllers
             return Ok(res);
         }
 
+        [HttpPost("equipos/renombrar-nuevo")]
+        public ActionResult<MarcadorGlobal> RenombrarCreandoNuevaFicha([FromQuery] string? local, [FromQuery] string? visitante)
+        {
+            var nuevaFicha = _service.RenombrarCreandoNuevaFicha(local, visitante);
+            return Ok(nuevaFicha);
+        }
+        //Exponer el endpoint para usarlo enel front 
+        [HttpPost("reset-en-cero")]
+        public ActionResult<MarcadorGlobal> ResetEnCero()=> Ok(_service.InicializarEnCero());
+
+        
+        //______________PARTIDOS_____________
+        public class FinPartidoDto { public string? Motivo { get; set; } }
+
+        [HttpPost("partido/terminar")]
+        public ActionResult<MarcadorGlobal> Terminar([FromQuery] string? motivo, [FromBody] FinPartidoDto? body)
+        {
+            var reason = body?.Motivo ?? motivo;
+            var res = _service.TerminarPartido(MarcadorService.EstadoPartido.Terminado, reason);
+            return Ok(res);
+        }
+
+        [HttpPost("partido/finalizar-auto")]
+        public ActionResult<MarcadorGlobal> FinalizarAuto()
+        {
+            var data = _service.TerminarPartido(motivo: null); 
+            return Ok(data);
+        }
+
+        // ---- Nuevo partido (resetea todo a 0 / duración actual) ----
         [HttpPost("nuevo")]
         public ActionResult<MarcadorGlobal> Nuevo() => Ok(_service.NuevoPartido());
-       
+
+        // -------- helpers --------
         private static bool TryNormalizarEquipo(string? equipo, out string normalizado)
         {
             normalizado = "";

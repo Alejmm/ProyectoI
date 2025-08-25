@@ -4,16 +4,19 @@ using Marcador.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Marcador.Api.Migrations
+namespace Marcador.Api.Data.Migrations
 {
     [DbContext(typeof(MarcadorDbContext))]
-    partial class MarcadorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250824042922_partidoHistorico")]
+    partial class partidoHistorico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,10 +159,10 @@ namespace Marcador.Api.Migrations
                     b.Property<bool>("EnProrroga")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("EquipoLocalId")
+                    b.Property<int>("EquipoLocalId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EquipoVisitanteId")
+                    b.Property<int>("EquipoVisitanteId")
                         .HasColumnType("int");
 
                     b.Property<string>("Estado")
@@ -172,16 +175,18 @@ namespace Marcador.Api.Migrations
                     b.Property<int>("FaltasVisitante")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<DateTime>("FechaUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MotivoFin")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreLocal")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NombreVisitante")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumeroProrroga")
@@ -197,10 +202,6 @@ namespace Marcador.Api.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipoLocalId");
-
-                    b.HasIndex("EquipoVisitanteId");
 
                     b.ToTable("PartidosHistoricos");
                 });
