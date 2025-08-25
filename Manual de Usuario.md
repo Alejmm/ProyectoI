@@ -1,5 +1,6 @@
 # 📖 Manual de Usuario
-# Creadores: Jenny Sofia Morales López 7690 08 6790 y Cristian Alejandro Melgar Ordoñez 7690 21 8342
+# https://github.com/Alejmm/ProyectoI 
+## Creadores: Jenny Sofia Morales López 7690 08 6790 y Cristian Alejandro Melgar Ordoñez 7690 21 8342
 # UMG
 
 ## 1. Introducción
@@ -119,4 +120,5 @@ La interfaz se divide en las siguientes secciones:
 En caso de inconvenientes, contactar al administrador del sistema o al equipo de desarrollo mediante:  
 📧 cmelgaro@miumg.edu.gt y  jmoralesl15@miumg.edu.gt
 ---
+
 
