@@ -65,9 +65,14 @@
   text-shadow:0 2px 0 #0006;
 }
 
+@font-face {
+  font-family: 'Digital7';
+  src: url('/assets/fonts/digital-7.ttf') format('truetype');
+}
 /* Caja del reloj con “display” digital */
 .clock{
   font-weight: 800;
+  font-family: 'Digital7', monospace;
   line-height: 1;
   letter-spacing: 1px;
   padding: 4px 12px;
@@ -109,10 +114,6 @@
 .leftScore{ grid-area:scoreL; }
 .rightScore{ grid-area:scoreR; }
 
-@font-face {
-  font-family: 'Digital7';
-  src: url('/assets/fonts/digital-7.ttf') format('truetype');
-}
 .scoreDigits{
   font-family: 'Digital7', monospace;
   font-weight:900;

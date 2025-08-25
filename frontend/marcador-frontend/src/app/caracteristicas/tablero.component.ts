@@ -51,6 +51,7 @@ export class TableroComponent implements OnInit, OnDestroy {
   private _error = signal<string>('');
   private _cargando = signal<boolean>(true);
   private _esperando = signal<boolean>(false);
+  private _autoFinalizado = false;
 
   // control de tiempo local para suavizar la UI
   private _segundosLocal = signal<number>(600);
@@ -73,24 +74,33 @@ export class TableroComponent implements OnInit, OnDestroy {
       if (d.relojCorriendo) {
         const s = this._segundosLocal();
         if (s > 0) this._segundosLocal.set(s - 1);
+
         const next = s - 1;
-          // cuando llega a 0, podemos auto‑avanzar
-          if (next === 0) {
-            // marcamos para no repetir
-            if (this.autoAvanzar && !this._yaAvanceEnEsteCero) {
-              this._yaAvanceEnEsteCero = true;
-              // dispara avanzar cuarto
-              this.svc.avanzarCuarto().subscribe({
-                next: (d) => {
-                  this._datos.set(d);
-                  this._segundosLocal.set(d.tiempoRestante);
-                  // rearmamos el flag para el siguiente final
-                  setTimeout(()=> this._yaAvanceEnEsteCero = false, 500);
-                },
-                error: () => { /* si falla, deja el flag en true para no disparar en loop */ }
-              });
-            }
+
+        // --- NUEVO: final automático al llegar a 0 en 4º cuarto (sin prórroga)
+        if (next === 0 && !d.enProrroga && d.cuartoActual === 4) {
+          if (!this._autoFinalizado) this.finalizarAuto();
+          // no avanzar cuarto si se finaliza
+          this._yaAvanceEnEsteCero = true;
+        } else if (next === 0) {
+          // cuando llega a 0, podemos auto‑avanzar (solo si no es el fin del partido)
+          if (this.autoAvanzar && !this._yaAvanceEnEsteCero) {
+            this._yaAvanceEnEsteCero = true;
+            // dispara avanzar cuarto
+            this.svc.avanzarCuarto().subscribe({
+              next: (d) => {
+                this._datos.set(d);
+                this._segundosLocal.set(d.tiempoRestante);
+                // rearmamos el flag para el siguiente final
+                setTimeout(()=> this._yaAvanceEnEsteCero = false, 500);
+                // rearmar final automático para el nuevo periodo
+                this._autoFinalizado = false;
+              },
+              error: () => { /* si falla, deja el flag en true para no disparar en loop */ }
+            });
           }
+        }
+
         // si llega a 0, detenemos local y refrescamos
         if (s - 1 <= 0) {
           this.cargar(false);
@@ -137,6 +147,13 @@ export class TableroComponent implements OnInit, OnDestroy {
         this._datos.set(d);
         this._segundosLocal.set(d.tiempoRestante);
         if (d.tiempoRestante > 0) this._yaAvanceEnEsteCero = false;
+        this._partidoTerminado = !d.relojCorriendo && d.cuartoActual >= 4 && !d.enProrroga 
+                               && d.tiempoRestante === 0;
+        // si ya viene en 0 y es 4º cuarto sin prórroga, dispara final auto
+        if (d.tiempoRestante === 0 && !d.enProrroga && d.cuartoActual === 4 && !this._autoFinalizado) {
+          this.finalizarAuto();
+        }
+
         this._error.set('');
         this._cargando.set(false);
       },
@@ -180,6 +197,7 @@ export class TableroComponent implements OnInit, OnDestroy {
         this._datos.set(d);
         this._segundosLocal.set(d.tiempoRestante);
         this._yaAvanceEnEsteCero = false;
+        this._autoFinalizado = false;      // <-- rearmar final auto
         this._esperando.set(false);
       },
       error: () => { this._esperando.set(false); }
@@ -231,6 +249,7 @@ export class TableroComponent implements OnInit, OnDestroy {
       next: (d: MarcadorGlobal) => {
         this._datos.set(d);
         this._segundosLocal.set(d.tiempoRestante);
+        this._autoFinalizado = false;  // <-- rearmar final auto al pasar de cuarto
         this._esperando.set(false);
       },
       error: () => { this._esperando.set(false); }
@@ -244,12 +263,25 @@ export class TableroComponent implements OnInit, OnDestroy {
     if (nuevoLocal === null && nuevoVisitante === null) return;
 
     this._esperando.set(true);
-    this.svc.renombrarEquipos(nuevoLocal ?? undefined, nuevoVisitante ?? undefined).subscribe({
+    this.svc.renombrarEquiposNuevo(nuevoLocal ?? undefined, nuevoVisitante ?? undefined).subscribe({
       next: (res: MarcadorGlobal) => {
         this._datos.set(res);
         this._esperando.set(false);
       },
       error: () => { this._esperando.set(false); }
+    });
+  }
+
+  renombrarCreando() {
+    const d = this._datos();
+    const nuevoLocal = prompt('Nuevo nombre (crea equipo NUEVO) local', d?.equipoLocal.nombre ?? '');
+    const nuevoVis   = prompt('Nuevo nombre (crea equipo NUEVO) visitante', d?.equipoVisitante.nombre ?? '');
+    if (nuevoLocal === null && nuevoVis === null) return;
+
+    this._esperando.set(true);
+    this.svc.renombrarEquiposNuevo(nuevoLocal ?? undefined, nuevoVis ?? undefined).subscribe({
+      next: (res) => { this._datos.set(res); this._esperando.set(false); },
+      error: () => this._esperando.set(false)
     });
   }
 
@@ -261,6 +293,8 @@ export class TableroComponent implements OnInit, OnDestroy {
         this._segundosLocal.set(d.tiempoRestante); 
         this._esperando.set(false); 
         this._yaAvanceEnEsteCero = false;
+        this._autoFinalizado = false; 
+        this._partidoTerminado = false;  // habilita el inicio
       },
       error: () => { this._esperando.set(false); }
     });
@@ -278,6 +312,7 @@ export class TableroComponent implements OnInit, OnDestroy {
       next: (d) => {
         this._datos.set(d);
         this._segundosLocal.set(d.tiempoRestante);
+        this._autoFinalizado = false; // <-- rearmar final auto
         this._esperando.set(false);
       },
       error: () => { this._esperando.set(false); }
@@ -288,4 +323,41 @@ export class TableroComponent implements OnInit, OnDestroy {
     this.autoAvanzar = (ev.target as HTMLInputElement).checked;
   }
 
+  finalizarAuto() {
+    if (this._autoFinalizado) return; // evitar duplicados
+    this._autoFinalizado = true;
+
+    this._esperando.set(true);
+    this.svc.finalizarAuto().subscribe({
+      next: () => {
+        this._partidoTerminado = true;
+        this.cargar(); // refresca datos del marcador
+        this._esperando.set(false);
+      },
+      error: () => {
+        this._esperando.set(false);
+        this._autoFinalizado = false; // permitir reintento si falló
+      }
+    });
+  }
+  
+  private _partidoTerminado = false;
+
+  partidoTerminado() { 
+    return this._partidoTerminado; 
+  } 
+  onTerminar() {
+    const motivo = prompt('Motivo (opcional):', '');
+    this._esperando.set(true);
+    this.svc.terminarPartido(motivo || undefined).subscribe({
+      next: (d: MarcadorGlobal) => {
+        this._datos.set(d);
+        this._segundosLocal.set(d.tiempoRestante); // ya viene pausado
+        this._autoFinalizado = true; // ya quedó finalizado 
+        this._esperando.set(false);
+        this._partidoTerminado = true;   // bloquea botones
+      },
+      error: () => this._esperando.set(false)
+    });
+  }
 }

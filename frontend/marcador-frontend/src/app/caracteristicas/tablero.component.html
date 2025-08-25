@@ -24,9 +24,10 @@
       <button mat-stroked-button (click)="abrirRenombrar()">Renombrar equipos</button>
       <a mat-stroked-button href="/publico" target="_blank" rel="noopener">Vista pública</a>
 
-      <button mat-stroked-button (click)="iniciar()"  [disabled]="corriendo() || !datos()">  <span class="material-symbols-outlined">play_arrow</span>Iniciar</button>
+      <button mat-stroked-button (click)="iniciar()"  [disabled]="corriendo() || !datos() || partidoTerminado()">  <span class="material-symbols-outlined">play_arrow</span>Iniciar</button>
       <button mat-stroked-button (click)="pausar()"   [disabled]="!corriendo()">  <span class="material-symbols-outlined">pause</span>Pausar</button>
       <button mat-stroked-button (click)="reiniciar()"><span class="material-symbols-outlined">restart_alt</span>Reiniciar {{ duracionMin }}:00</button>
+      <button mat-stroked-button (click)="onTerminar()" [disabled]="!corriendo() || partidoTerminado()"> <span class="material-symbols-outlined">cancel</span>Terminar partido</button>
 
       <div class="duracion">
         <label>Duración (min)</label>
@@ -73,14 +74,12 @@
       <button mat-flat-button color="primary" (click)="siguienteCuarto()" [disabled]="esperando()">Siguiente cuarto</button>
 
       <label class="auto">
-        <input type="checkbox" [checked]="autoAvanzar"
-               (change)="onAutoChange($event)">
+        <input type="checkbox" [checked]="autoAvanzar" (change)="onAutoChange($event)">
         Auto‑avanzar al llegar a 0
       </label>
 
       <button mat-stroked-button (click)="cargar()" [disabled]="esperando()">Refrescar</button>
       <button mat-stroked-button color="primary" (click)="nuevoPartido()" [disabled]="esperando()">Nuevo partido</button>
     </div>
-
   </ng-container>
 </mat-card>

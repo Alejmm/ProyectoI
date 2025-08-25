@@ -6,7 +6,7 @@ import { MarcadorGlobal } from '../modelos/marcador-global';
 @Injectable({ providedIn: 'root' })
 export class MarcadorService {
   private http = inject(HttpClient);
-  private readonly base = '/api/marcador';
+  private base = '/api/marcador';
 
   // ---- Lecturas ----
   obtenerMarcador(): Observable<MarcadorGlobal> {
@@ -81,7 +81,24 @@ export class MarcadorService {
     });
   }
 
+  renombrarEquiposNuevo(local?: string, visitante?: string) {
+    const params = new URLSearchParams();
+    if (local && local.trim()) params.set('local', local.trim());
+    if (visitante && visitante.trim()) params.set('visitante', visitante.trim());
+    return this.http.post<MarcadorGlobal>(`/api/marcador/equipos/renombrar-nuevo?${params.toString()}`, {});
+  }
+
+  // Nuevo partido despues de que guardo
   nuevoPartido(): Observable<MarcadorGlobal> {
   return this.http.post<MarcadorGlobal>(`/api/marcador/nuevo`, {});
   }
+  //Termina antes del tiempo estipulado
+  terminarPartido(motivo?: string) {
+    return this.http.post<MarcadorGlobal>(`${this.base}/partido/terminar`, { motivo });
+  }
+  //Se guarda cuando ya termino el tiempo estipulado
+  finalizarAuto() {
+  return this.http.post<MarcadorGlobal>(`${this.base}/partido/finalizar-auto`, {});
+  }
+
 }
