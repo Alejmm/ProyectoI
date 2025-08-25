@@ -1,4 +1,6 @@
 # 📖 Manual de Usuario
+# Creadores: Jenny Sofia Morales López 7690 08 6790 y Cristian Alejandro Melgar Ordoñez 7690 21 8342
+# UMG
 
 ## 1. Introducción
 El presente manual tiene como objetivo guiar al usuario en el uso del **Marcador de Baloncesto en Tiempo Real**, una aplicación web que permite llevar el control de puntos, tiempo de juego, cuartos y faltas de manera intuitiva.  
@@ -34,17 +36,19 @@ La interfaz se divide en las siguientes secciones:
 - Nuevo partido
 
 - Tablero de control en modo pantalla desktop
-![alt text](<Imagen de WhatsApp 2025-08-23 a las 17.39.26_4e7a01bb.jpg>)
+![Imagen de WhatsApp 2025-08-24 a las 21 56 00_6ca2eebf](https://github.com/user-attachments/assets/5b3ee5d2-1415-4705-8d57-3795a4c4f278)
 
 - Tablero de control en modo pantalla móvil
-![alt text](<Imagen de WhatsApp 2025-08-23 a las 17.41.52_25126517.jpg>)
-![alt text](<Imagen de WhatsApp 2025-08-23 a las 17.42.23_055892b3.jpg>)
+![Imagen de WhatsApp 2025-08-23 a las 17 41 52_25126517](https://github.com/user-attachments/assets/a871f731-ee30-45b5-81a2-9a7ac1303100)
 
-- Inicio de partido
-![alt text](<Imagen de WhatsApp 2025-08-23 a las 17.44.09_82b709f4.jpg>)
+- Vista al publico
+![Imagen de WhatsApp 2025-08-24 a las 21 56 16_35075f00](https://github.com/user-attachments/assets/8b487496-1232-4514-ae64-7d9b674a86f0)
 
-- Cronometro con función en cambiar de color al faltar 10 segundos para finalizar el partido.
-![alt text](<Imagen de WhatsApp 2025-08-23 a las 18.18.36_8accaa3e.jpg>)
+
+- Renombrar equipos
+![Imagen de WhatsApp 2025-08-24 a las 21 56 47_9603f196](https://github.com/user-attachments/assets/683fd77a-13f1-44b6-aafd-4318267babd4)
+
+
 
 ## 4. Funcionalidades Principales
 
@@ -115,3 +119,4 @@ La interfaz se divide en las siguientes secciones:
 En caso de inconvenientes, contactar al administrador del sistema o al equipo de desarrollo mediante:  
 📧 cmelgaro@miumg.edu.gt y  jmoralesl15@miumg.edu.gt
 ---
+
